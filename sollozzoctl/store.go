@@ -19,11 +19,13 @@ func NewStore(path string) *Store {
 }
 
 // Path returns the data path.
-func (s *Store) Path() string { return s.path }
+func (s *Store) Path() string {
+	return s.path
+}
 
 func (s *Store) Open() error {
 	// Open underlying data store.
-	db, err := bolt.Open(s.path, 0666, &bolt.Options{Timeout: 1 * time.Second})
+	db, err := bolt.Open(s.path, 0755, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {
 		return err
 	}
@@ -51,5 +53,7 @@ func (s *Store) Close() error {
 
 // Ping connects to the database. Returns nil if successful.
 func (s *Store) Ping() error {
-	return s.db.View(func(tx *bolt.Tx) error { return nil })
+	return s.db.View(func(tx *bolt.Tx) error {
+		return nil
+	})
 }
