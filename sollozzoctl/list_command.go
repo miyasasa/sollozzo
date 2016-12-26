@@ -1,10 +1,11 @@
 package sollozzoctl
 
 import (
-	"github.com/spf13/cobra"
-	"encoding/json"
-	"github.com/boltdb/bolt"
 	"fmt"
+
+	"encoding/json"
+
+	"github.com/spf13/cobra"
 )
 
 var listCmd = &cobra.Command{
@@ -22,14 +23,12 @@ func runListCommand(cmd *cobra.Command, args []string) {
 
 	var projects []Project;
 
-	store.db.View(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte("projects"))
-		bucket.ForEach(func(k, v []byte) error {
-			var project Project;
-			json.Unmarshal(v, &project);
-			projects = append(projects, project);
-			return nil;
-		})
+	store.forEach(func(k, v []byte) error {
+
+		var p Project
+		json.Unmarshal(v, &p)
+
+		projects = append(projects, p)
 
 		return nil;
 	})
@@ -39,4 +38,6 @@ func runListCommand(cmd *cobra.Command, args []string) {
 	}
 
 }
+
+
 

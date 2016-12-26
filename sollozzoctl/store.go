@@ -4,6 +4,11 @@ import (
 	"time"
 
 	"github.com/boltdb/bolt"
+	"encoding/json"
+)
+
+var (
+	projectBucket = []byte("projects")
 )
 
 type Store struct {
@@ -33,7 +38,7 @@ func (s *Store) Open() error {
 
 	// Initialize all the required buckets.
 	if err := s.db.Update(func(tx *bolt.Tx) error {
-		tx.CreateBucketIfNotExists([]byte("projects"))
+		tx.CreateBucketIfNotExists(projectBucket)
 		return nil
 	}); err != nil {
 		s.Close()
@@ -55,5 +60,47 @@ func (s *Store) Close() error {
 func (s *Store) Ping() error {
 	return s.db.View(func(tx *bolt.Tx) error {
 		return nil
+	})
+}
+
+func (s *Store) Put(key []byte, content []byte) {
+	store.db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(projectBucket)
+
+		bucket.Put(key, content)
+
+		return nil;
+	})
+}
+
+func (s *Store) Delete(key []byte) {
+	store.db.Update(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(projectBucket)
+
+		bucket.Delete(key);
+
+		return nil
+	})
+}
+
+func (s *Store) Get(key []byte, t interface{}) {
+	store.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(projectBucket)
+
+		encoded := bucket.Get(key)
+
+		json.Unmarshal(encoded, t)
+
+		return nil;
+	})
+}
+
+func (s *Store) forEach(fn func(k, v []byte) error) {
+	store.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(projectBucket)
+
+		bucket.ForEach(fn)
+
+		return nil;
 	})
 }

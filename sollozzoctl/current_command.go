@@ -1,10 +1,9 @@
 package sollozzoctl
 
 import (
-	"github.com/spf13/cobra"
-	"encoding/json"
 	"fmt"
-	"github.com/boltdb/bolt"
+
+	"github.com/spf13/cobra"
 )
 
 var currentCmd = &cobra.Command{
@@ -23,15 +22,7 @@ func runCurrentCommand(cmd *cobra.Command, args []string) {
 	//var project = &Project{Key:args[0], Desc: "Description", Major:1, Minor: 0, BuildNumber: 0}
 	var proj Project
 
-	store.db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte("projects"))
-
-		v := bucket.Get([]byte(args[0]))
-
-		json.Unmarshal(v, &proj)
-
-		return nil;
-	})
+	store.Get([]byte(args[0]), &proj)
 
 	fmt.Println(proj.Display())
 }

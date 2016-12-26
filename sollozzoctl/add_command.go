@@ -2,11 +2,9 @@ package sollozzoctl
 
 import (
 	"fmt"
-	"encoding/json"
 
 	"github.com/spf13/cobra"
-
-	"github.com/boltdb/bolt"
+	"encoding/json"
 )
 
 var addCmd = &cobra.Command{
@@ -24,17 +22,9 @@ func runAddCommand(cmd *cobra.Command, args []string) {
 	//var version = Version{1, 0, 0}
 	var project = &Project{Key:args[0], Desc: "Description", Major:1, Minor: 0, BuildNumber: 0}
 
-	store.db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket([]byte("projects"))
+	content, _ := json.Marshal(project)
 
-		encoded, err := json.Marshal(&project)
-
-		if err != nil {
-			return err
-		}
-		bucket.Put([]byte(project.Key), encoded)
-		return nil;
-	})
+	store.Put([]byte(args[0]), content)
 
 	fmt.Println(project.Key + " created successfully")
 }
