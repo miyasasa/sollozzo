@@ -1,7 +1,7 @@
 package main
 
-import "fmt"
+import "sollozzo/sollozzoCtl"
 
 func main() {
-	fmt.Println("...")
+	sollozoCtl.Main();
 }
