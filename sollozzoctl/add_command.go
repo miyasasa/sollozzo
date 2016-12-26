@@ -3,8 +3,9 @@ package sollozzoctl
 import (
 	"fmt"
 
-	"github.com/spf13/cobra"
 	"encoding/json"
+	"github.com/spf13/cobra"
+	"github.com/yasinKIZILKAYA/sollozzo/model"
 )
 
 var addCmd = &cobra.Command{
@@ -20,7 +21,7 @@ func init() {
 
 func runAddCommand(cmd *cobra.Command, args []string) {
 	//var version = Version{1, 0, 0}
-	var project = &Project{Key:args[0], Desc: "Description", Major:1, Minor: 0, BuildNumber: 0}
+	var project = &model.Project{Key: args[0], Desc: "Description", Major: 1, Minor: 0, BuildNumber: 0}
 
 	content, _ := json.Marshal(project)
 

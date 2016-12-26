@@ -6,13 +6,14 @@ import (
 	"encoding/json"
 
 	"github.com/spf13/cobra"
+	"github.com/yasinKIZILKAYA/sollozzo/model"
 )
 
 var listCmd = &cobra.Command{
-	Use:"list [list of projects]",
-	Short:"List of your projects",
-	Long:"List of your projects",
-	Run:runListCommand,
+	Use:   "list [list of projects]",
+	Short: "List of your projects",
+	Long:  "List of your projects",
+	Run:   runListCommand,
 }
 
 func init() {
@@ -21,16 +22,16 @@ func init() {
 
 func runListCommand(cmd *cobra.Command, args []string) {
 
-	var projects []Project;
+	var projects []model.Project
 
-	store.forEach(func(k, v []byte) error {
+	store.ForEach(func(k, v []byte) error {
 
-		var p Project
+		var p model.Project
 		json.Unmarshal(v, &p)
 
 		projects = append(projects, p)
 
-		return nil;
+		return nil
 	})
 
 	for _, ps := range projects {
@@ -38,6 +39,3 @@ func runListCommand(cmd *cobra.Command, args []string) {
 	}
 
 }
-
-
-

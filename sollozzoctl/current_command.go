@@ -4,23 +4,24 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/yasinKIZILKAYA/sollozzo/model"
 )
 
 var currentCmd = &cobra.Command{
-	Use:"current [project current version]",
-	Short:"Show project current version",
-	Long:"Show project current version",
-	Run:runCurrentCommand,
+	Use:   "current [project current version]",
+	Short: "Show project current version",
+	Long:  "Show project current version",
+	Run:   runCurrentCommand,
 }
 
 func init() {
-	cmdSollozzo.AddCommand(currentCmd);
+	cmdSollozzo.AddCommand(currentCmd)
 }
 
 func runCurrentCommand(cmd *cobra.Command, args []string) {
 
 	//var project = &Project{Key:args[0], Desc: "Description", Major:1, Minor: 0, BuildNumber: 0}
-	var proj Project
+	var proj model.Project
 
 	store.Get([]byte(args[0]), &proj)
 
