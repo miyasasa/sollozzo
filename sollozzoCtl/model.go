@@ -1,4 +1,4 @@
-package sollozoCtl
+package sollozzoctl
 
 type Version struct {
 	Major       uint8

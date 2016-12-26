@@ -1,29 +1,24 @@
-package sollozoCtl
+package sollozzoctl
 
 import (
 	"github.com/spf13/cobra"
-	"os/exec"
-	"log"
 )
 
-func init() {
-	rootCmd.AddCommand(addCmd)
+var addCmd = &cobra.Command{
+	Use:   "add [Add new Project]",
+	Short: "Add new Project",
+	Long:  "Add new Project",
+	Run:   runAddCommand,
 }
 
-var addCmd = &cobra.Command{
-	Use:"add [Add new Project]",
-	Short:"Add new Project",
-	Long:"Add new Project",
-	Run:func(cmd *cobra.Command, args []string) {
+func init() {
+	cmdSollozzo.AddCommand(addCmd)
+}
 
-		id, err := exec.Command("uuidgen").Output()
-		if err != nil {
-			log.Fatal(err)
-		}
+func runAddCommand(cmd *cobra.Command, args []string) {
 
-		//project := domain.Project{string(id), args[0], time.Now(), 1.0, 0.0, 0.0, 0.0, }
-		//message := service.AddProject(&project);
+	//project := domain.Project{string(id), args[0], time.Now(), 1.0, 0.0, 0.0, 0.0, }
+	//message := service.AddProject(&project);
 
-		//fmt.Println("Project " + args[0] + " added ", message);
-	},
+	//fmt.Println("Project " + args[0] + " added ", message);
 }

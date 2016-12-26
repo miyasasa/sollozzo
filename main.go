@@ -1,7 +1,9 @@
 package main
 
-import "sollozzo/sollozzoCtl"
+import (
+	"github.com/yasinKIZILKAYA/sollozzo/sollozzoctl"
+)
 
 func main() {
-	sollozoCtl.Main();
+	sollozzoctl.Main()
 }
