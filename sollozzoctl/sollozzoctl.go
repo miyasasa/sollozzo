@@ -20,7 +20,7 @@ const (
 )
 
 var (
-	store       Store
+	store       *Store
 	cmdSollozzo = &cobra.Command{
 		Use:   cliName,
 		Short: cliDescription,
@@ -38,7 +38,7 @@ func path() string {
 }
 
 func dbPath() string {
-	return path + string(filepath.Separator) + db
+	return path() + string(filepath.Separator) + db
 }
 
 // exists returns whether the given file or directory exists or not
@@ -61,7 +61,7 @@ func Main() {
 	}
 
 	if !exist {
-		os.Mkdir(path(), 0644)
+		os.Mkdir(path(), 0755)
 	}
 
 	store = NewStore(dbPath())
