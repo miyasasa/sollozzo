@@ -1,10 +1,11 @@
-package sollozzoctl
+package boltdb
 
 import (
 	"time"
 
-	"github.com/boltdb/bolt"
 	"encoding/json"
+
+	"github.com/boltdb/bolt"
 )
 
 var (
@@ -64,43 +65,43 @@ func (s *Store) Ping() error {
 }
 
 func (s *Store) Put(key []byte, content []byte) {
-	store.db.Update(func(tx *bolt.Tx) error {
+	s.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 
 		bucket.Put(key, content)
 
-		return nil;
+		return nil
 	})
 }
 
 func (s *Store) Delete(key []byte) {
-	store.db.Update(func(tx *bolt.Tx) error {
+	s.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 
-		bucket.Delete(key);
+		bucket.Delete(key)
 
 		return nil
 	})
 }
 
 func (s *Store) Get(key []byte, t interface{}) {
-	store.db.View(func(tx *bolt.Tx) error {
+	s.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 
 		encoded := bucket.Get(key)
 
 		json.Unmarshal(encoded, t)
 
-		return nil;
+		return nil
 	})
 }
 
-func (s *Store) forEach(fn func(k, v []byte) error) {
-	store.db.View(func(tx *bolt.Tx) error {
+func (s *Store) ForEach(fn func(k, v []byte) error) {
+	s.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 
 		bucket.ForEach(fn)
 
-		return nil;
+		return nil
 	})
 }

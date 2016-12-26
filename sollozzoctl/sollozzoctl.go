@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 
 	"github.com/spf13/cobra"
+	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 )
 
 const (
@@ -20,7 +21,7 @@ const (
 )
 
 var (
-	store       *Store
+	store       *boltdb.Store
 	cmdSollozzo = &cobra.Command{
 		Use:   cliName,
 		Short: cliDescription,
@@ -64,7 +65,7 @@ func Main() {
 		os.Mkdir(path(), 0755)
 	}
 
-	store = NewStore(dbPath())
+	store = boltdb.NewStore(dbPath())
 
 	err = store.Open()
 

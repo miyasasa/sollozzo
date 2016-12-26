@@ -1,4 +1,4 @@
-package sollozzoctl
+package model
 
 import "fmt"
 
@@ -11,9 +11,9 @@ type Project struct {
 }
 
 func (p *Project) Display() string {
-	return fmt.Sprintf("%v %v.%v.%v",p.Key, p.Major,p.Minor,p.BuildNumber)
+	return fmt.Sprintf("%v %v.%v.%v", p.Key, p.Major, p.Minor, p.BuildNumber)
 }
 
 func (p *Project) Version() string {
-	return fmt.Sprintf("%v.%v.%v",p.Major,p.Minor,p.BuildNumber)
+	return fmt.Sprintf("%v.%v.%v", p.Major, p.Minor, p.BuildNumber)
 }
