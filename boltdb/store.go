@@ -1,11 +1,14 @@
 package boltdb
 
 import (
+	"encoding/json"
+	"errors"
+	"os"
+	"os/user"
+	"path/filepath"
 	"time"
 
-	"encoding/json"
-
-	"errors"
+	"fmt"
 	"github.com/boltdb/bolt"
 )
 
@@ -13,15 +16,42 @@ var (
 	projectBucket = []byte("projects")
 )
 
+const (
+	config = ".sollozzo"
+	db     = "sollozzo.db"
+)
+
 type Store struct {
 	path string
 	db   *bolt.DB
 }
 
+func path() string {
+	current, _ := user.Current()
+
+	return current.HomeDir + string(filepath.Separator) + config
+}
+
+func dbPath(dbName string) string {
+	return path() + string(filepath.Separator) + dbName
+}
+
+// exists returns whether the given file or directory exists or not
+func exists(path string) (bool, error) {
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+	return true, err
+}
+
 // NewStore returns a new instance of Store.
-func NewStore(path string) *Store {
+func NewStore() *Store {
 	return &Store{
-		path: path,
+		path: dbPath(db),
 	}
 }
 
@@ -31,6 +61,17 @@ func (s *Store) Path() string {
 }
 
 func (s *Store) Open() error {
+	exist, err := exists(path())
+
+	if err != nil {
+		fmt.Print("failed to open db", err)
+		os.Exit(1)
+	}
+
+	if !exist {
+		os.Mkdir(path(), 0755)
+	}
+
 	// Open underlying data store.
 	db, err := bolt.Open(s.path, 0755, &bolt.Options{Timeout: 1 * time.Second})
 	if err != nil {

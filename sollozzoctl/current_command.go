@@ -1,33 +1,35 @@
 package sollozzoctl
 
 import (
-	"os"
 	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
+	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 )
 
-var currentCmd = &cobra.Command{
-	Use:   "current [project current version]",
-	Short: "Show project current version",
-	Long:  "Show project current version",
-	Run:   runCurrentCommand,
-}
+func NewCurrentCommand(store *boltdb.Store) *cobra.Command {
 
-func init() {
-	cmdSollozzo.AddCommand(currentCmd)
-}
+	cmd := &cobra.Command{
+		Use:   "current [project current version]",
+		Short: "Show project current version",
+		Long:  "Show project current version",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			//convert args to Add opts
+			return runCurrentCommand(store, args)
+		},
+	}
 
-func runCurrentCommand(cmd *cobra.Command, args []string) {
+	return cmd
+}
+func runCurrentCommand(store *boltdb.Store, args []string) error {
+
 	var proj model.Project
 
 	err := store.Get([]byte(args[0]), &proj)
 
-	if err != nil {
-		fmt.Print("Project can not found")
-		os.Exit(0)
-	} else {
+	if err == nil {
 		fmt.Println(proj.Version())
 	}
+	return err
 }
