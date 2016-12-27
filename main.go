@@ -6,8 +6,10 @@ import (
 	"os"
 )
 
+const db     = "sollozzo.db"
+
 func main() {
-	store := boltdb.NewStore()
+	store := boltdb.NewStore(db)
 
 	err := store.Open()
 
