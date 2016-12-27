@@ -16,10 +16,8 @@ var (
 	projectBucket = []byte("projects")
 )
 
-const (
-	config = ".sollozzo"
-	db     = "sollozzo.db"
-)
+const config = ".sollozzo"
+
 
 type Store struct {
 	path string
@@ -49,7 +47,7 @@ func exists(path string) (bool, error) {
 }
 
 // NewStore returns a new instance of Store.
-func NewStore() *Store {
+func NewStore(db string) *Store {
 	return &Store{
 		path: dbPath(db),
 	}
