@@ -2,27 +2,33 @@ package sollozzoctl
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
-	"os"
+	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 )
 
-var removeCmd = &cobra.Command{
-	Use:   "remove [remove project]",
-	Short: "Remove project",
-	Long:  "Remove project",
-	Run:   runRemoveCommand,
+func NewRemoveCommand(store *boltdb.Store) *cobra.Command {
+
+	cmd := &cobra.Command{
+		Use:   "remove [remove project]",
+		Short: "Remove project",
+		Long:  "Remove project",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			//convert args to Add opts
+			return runRemoveCommand(store, args)
+		},
+	}
+
+	return cmd
 }
 
-func init() {
-	cmdSollozzo.AddCommand(removeCmd)
-}
+func runRemoveCommand(store *boltdb.Store, args []string) error {
 
-func runRemoveCommand(cmd *cobra.Command, args []string) {
 	err := store.Delete([]byte(args[0]))
-	if err != nil {
-		fmt.Println("Project can not removed")
-		os.Exit(1)
-	} else {
+
+	if err == nil {
 		fmt.Println(args[0], " removed successfully")
 	}
+
+	return err
 }
