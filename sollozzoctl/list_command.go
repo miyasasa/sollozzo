@@ -2,9 +2,7 @@ package sollozzoctl
 
 import (
 	"fmt"
-
 	"encoding/json"
-
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
 )
@@ -34,8 +32,12 @@ func runListCommand(cmd *cobra.Command, args []string) {
 		return nil
 	})
 
-	for _, ps := range projects {
-		fmt.Println(ps.Display())
+	if 0 != len(projects) {
+		for _, ps := range projects {
+			fmt.Println(ps.Display())
+		}
+	} else {
+		fmt.Println("You do not have a project yet")
 	}
 
 }

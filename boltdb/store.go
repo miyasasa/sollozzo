@@ -5,6 +5,7 @@ import (
 
 	"encoding/json"
 
+	"errors"
 	"github.com/boltdb/bolt"
 )
 
@@ -64,36 +65,55 @@ func (s *Store) Ping() error {
 	})
 }
 
-func (s *Store) Put(key []byte, content []byte) {
-	s.db.Update(func(tx *bolt.Tx) error {
+func (s *Store) Put(key []byte, content []byte) error {
+	err := s.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 
-		bucket.Put(key, content)
+		err := bucket.Put(key, content)
+
+		if err != nil {
+			return err
+		}
 
 		return nil
 	})
+	return err
 }
 
-func (s *Store) Delete(key []byte) {
-	s.db.Update(func(tx *bolt.Tx) error {
-		bucket := tx.Bucket(projectBucket)
-
-		bucket.Delete(key)
-
-		return nil
-	})
-}
-
-func (s *Store) Get(key []byte, t interface{}) {
-	s.db.View(func(tx *bolt.Tx) error {
+func (s *Store) Delete(key []byte) error {
+	err := s.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 
 		encoded := bucket.Get(key)
 
+		if encoded == nil {
+			return errors.New("project not found")
+		}
+
+		err1 := bucket.Delete(key)
+
+		if err1 != nil {
+			return err1
+		}
+		return nil
+	})
+
+	return err
+}
+
+func (s *Store) Get(key []byte, t interface{}) error {
+	err := s.db.View(func(tx *bolt.Tx) error {
+		bucket := tx.Bucket(projectBucket)
+
+		encoded := bucket.Get(key)
+		if encoded == nil {
+			return errors.New("project not found")
+		}
 		json.Unmarshal(encoded, t)
 
 		return nil
 	})
+	return err
 }
 
 func (s *Store) ForEach(fn func(k, v []byte) error) {

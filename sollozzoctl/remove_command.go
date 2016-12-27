@@ -1,7 +1,9 @@
 package sollozzoctl
 
 import (
+	"fmt"
 	"github.com/spf13/cobra"
+	"os"
 )
 
 var removeCmd = &cobra.Command{
@@ -16,5 +18,11 @@ func init() {
 }
 
 func runRemoveCommand(cmd *cobra.Command, args []string) {
-	store.Delete([]byte(args[0]))
+	err := store.Delete([]byte(args[0]))
+	if err != nil {
+		fmt.Println("Project can not removed")
+		os.Exit(1)
+	} else {
+		fmt.Println(args[0], " removed successfully")
+	}
 }

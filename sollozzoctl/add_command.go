@@ -20,12 +20,16 @@ func init() {
 }
 
 func runAddCommand(cmd *cobra.Command, args []string) {
-	//var version = Version{1, 0, 0}
 	var project = &model.Project{Key: args[0], Desc: "Description", Major: 1, Minor: 0, BuildNumber: 0}
 
 	content, _ := json.Marshal(project)
 
-	store.Put([]byte(args[0]), content)
+	err := store.Put([]byte(args[0]), content)
 
-	fmt.Println(project.Key + " created successfully")
+	if err != nil {
+		fmt.Println("Project can not created")
+	} else {
+
+		fmt.Println(project.Key + " created successfully")
+	}
 }

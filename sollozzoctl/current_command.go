@@ -19,11 +19,13 @@ func init() {
 }
 
 func runCurrentCommand(cmd *cobra.Command, args []string) {
-
-	//var project = &Project{Key:args[0], Desc: "Description", Major:1, Minor: 0, BuildNumber: 0}
 	var proj model.Project
 
-	store.Get([]byte(args[0]), &proj)
+	err := store.Get([]byte(args[0]), &proj)
 
-	fmt.Println(proj.Display())
+	if err != nil {
+		fmt.Print("Project can not found")
+	} else {
+		fmt.Println(proj.Display())
+	}
 }
