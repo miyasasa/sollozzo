@@ -26,7 +26,7 @@ func runCurrentCommand(cmd *cobra.Command, args []string) {
 
 	if err != nil {
 		fmt.Print("Project can not found")
-		os.Exit(0);
+		os.Exit(0)
 	} else {
 		fmt.Println(proj.Display())
 	}

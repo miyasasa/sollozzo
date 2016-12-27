@@ -1,11 +1,11 @@
 package sollozzoctl
 
 import (
-	"encoding/json"
 	"fmt"
+	"os"
+
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
-	"os"
 )
 
 var name string
@@ -47,13 +47,8 @@ func runRelease(cmd *cobra.Command, args []string) {
 			os.Exit(1)
 		}
 
-		encode, err := json.Marshal(&p)
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
+		store.Put([]byte(p.Key), &p)
 
-		store.Put([]byte(p.Key), encode)
 		fmt.Println(p.Version())
 	}
 }

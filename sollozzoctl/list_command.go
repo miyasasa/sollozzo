@@ -1,8 +1,8 @@
 package sollozzoctl
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
 	"os"

@@ -65,11 +65,18 @@ func (s *Store) Ping() error {
 	})
 }
 
-func (s *Store) Put(key []byte, content []byte) error {
+func (s *Store) Put(key []byte, t interface{}) error {
+
 	err := s.db.Update(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(projectBucket)
 
-		err := bucket.Put(key, content)
+		content, err := json.Marshal(t)
+
+		if err != nil {
+			return err
+		}
+
+		err = bucket.Put(key, content)
 
 		if err != nil {
 			return err
