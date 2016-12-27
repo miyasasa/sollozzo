@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
+	"os"
 )
 
 var listCmd = &cobra.Command{
@@ -32,12 +33,13 @@ func runListCommand(cmd *cobra.Command, args []string) {
 		return nil
 	})
 
-	if 0 != len(projects) {
+	if 0 == len(projects) {
+		fmt.Println("You do not have a project yet")
+		os.Exit(0)
+	} else {
 		for _, ps := range projects {
 			fmt.Println(ps.Display())
 		}
-	} else {
-		fmt.Println("You do not have a project yet")
 	}
 
 }
