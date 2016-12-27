@@ -6,28 +6,36 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
+	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 )
 
 var name string
 
-var releaseCmd = &cobra.Command{
-	Use:   "release [projectname] [major, minor, build]",
-	Short: "Release project version",
-	Long:  "Release project version",
-	Run:   runRelease,
-}
+func NewReleaseCommand(store *boltdb.Store) *cobra.Command {
 
-func init() {
-	cmdSollozzo.AddCommand(releaseCmd)
-}
+	cmd := &cobra.Command{
+		Use:   "release [projectname] [major, minor, build]",
+		Short: "Release project version",
+		Long:  "Release project version",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			if len(args) != 2 {
+				cmd.Help()
+				return nil
+			}
 
-func runRelease(cmd *cobra.Command, args []string) {
-	if len(args) != 2 {
-		cmd.Help()
-	} else {
-		name = args[0]
-		op := args[1]
+			name = args[0]
+			op := args[1]
+
+			//convert args to Release  opts
+			return runReleaseCommand(store, cmd,name,op)
+		},
+	}
+
+	return cmd
+}
+func runReleaseCommand(store *boltdb.Store, cmd *cobra.Command, name string, op string) error {
 		var p model.Project
+
 		err := store.Get([]byte(name), &p)
 
 		if err != nil {
@@ -50,5 +58,6 @@ func runRelease(cmd *cobra.Command, args []string) {
 		store.Put([]byte(p.Key), &p)
 
 		fmt.Println(p.Version())
-	}
+
+	return err
 }

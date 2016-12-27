@@ -7,20 +7,24 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
+	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 )
 
-var listCmd = &cobra.Command{
-	Use:   "list [list of projects]",
-	Short: "List of your projects",
-	Long:  "List of your projects",
-	Run:   runListCommand,
-}
+func NewListCommand(store *boltdb.Store) *cobra.Command {
 
-func init() {
-	cmdSollozzo.AddCommand(listCmd)
-}
+	cmd := &cobra.Command{
+		Use:   "list [list of projects]",
+		Short: "List of your projects",
+		Long:  "List of your projects",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			//convert args to Add opts
+			return runListCommand(store)
+		},
+	}
 
-func runListCommand(cmd *cobra.Command, args []string) {
+	return cmd
+}
+func runListCommand(store *boltdb.Store) error {
 
 	var projects []model.Project
 
@@ -41,4 +45,5 @@ func runListCommand(cmd *cobra.Command, args []string) {
 		model.Display(projects);
 	}
 
+	return nil
 }

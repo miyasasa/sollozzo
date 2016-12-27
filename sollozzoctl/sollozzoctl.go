@@ -1,84 +1,59 @@
 package sollozzoctl
 
 import (
-	"log"
-
 	"os"
-	"os/user"
-
-	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 )
 
 const (
-	config = ".sollozzo"
-	db     = "sollozzo.db"
-
-	cliName        = "sollozzo"
+	cliName = "sollozzo"
 	cliDescription = "sollozzo is a version number generation tool for generate unique version numbers."
 )
 
-var (
-	store       *boltdb.Store
-	cmdSollozzo = &cobra.Command{
-		Use:   cliName,
-		Short: cliDescription,
+var cli *SollozzoCli
 
-		Run: func(cCmd *cobra.Command, args []string) {
-			cCmd.HelpFunc()(cCmd, args)
+type SollozzoCli struct {
+	cmd *cobra.Command
+}
+
+func NewSollozzoCli(s *boltdb.Store) *SollozzoCli {
+	cli = &SollozzoCli{
+		cmd: &cobra.Command{
+			Use:   cliName,
+			Short: cliDescription,
+
+			Run: func(cCmd *cobra.Command, args []string) {
+				cCmd.HelpFunc()(cCmd, args)
+			},
 		},
 	}
-)
 
-func path() string {
-	current, _ := user.Current()
+	registerCommands(cli.cmd, s)
 
-	return current.HomeDir + string(filepath.Separator) + config
+	return cli
 }
 
-func dbPath() string {
-	return path() + string(filepath.Separator) + db
+func registerCommands(cmd *cobra.Command, store *boltdb.Store) {
+	cmd.AddCommand(
+		NewAddCommand(store),
+		NewCurrentCommand(store),
+		NewListCommand(store),
+		NewReleaseCommand(store),
+		NewRemoveCommand(store),
+	)
 }
 
-// exists returns whether the given file or directory exists or not
-func exists(path string) (bool, error) {
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-	return true, err
+func (cli *SollozzoCli) registerCommand(cmd *cobra.Command) {
+
 }
 
-func Main() {
-	exist, err := exists(path())
-
-	if err != nil {
-		log.Panic(err)
-	}
-
-	if !exist {
-		os.Mkdir(path(), 0755)
-	}
-
-	store = boltdb.NewStore(dbPath())
-
-	err = store.Open()
-
-	if err != nil {
-		log.Panic(err)
-	}
-
-	defer store.Close()
-
+func (cli *SollozzoCli) Execute() {
 	if len(os.Args) == 1 {
-		cmdSollozzo.HelpFunc()(cmdSollozzo, os.Args)
+		cli.cmd.HelpFunc()(cli.cmd, os.Args)
 		os.Exit(0)
 	}
 
-	cmdSollozzo.Execute()
+	cli.cmd.Execute()
 }
