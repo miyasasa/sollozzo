@@ -21,7 +21,7 @@ func init() {
 
 func runAddCommand(cmd *cobra.Command, args []string) {
 
-	var project = &model.Project{Key: args[0], Desc: "Description", Major: 1, Minor: 0, BuildNumber: 0}
+	var project = &model.Project{Key: args[0], Major: 1, Minor: 0, BuildNumber: 0}
 
 	err := store.Put([]byte(args[0]), project)
 

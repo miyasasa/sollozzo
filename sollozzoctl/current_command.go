@@ -1,11 +1,11 @@
 package sollozzoctl
 
 import (
+	"os"
 	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
-	"os"
 )
 
 var currentCmd = &cobra.Command{
@@ -28,6 +28,6 @@ func runCurrentCommand(cmd *cobra.Command, args []string) {
 		fmt.Print("Project can not found")
 		os.Exit(0)
 	} else {
-		fmt.Println(proj.Display())
+		fmt.Println(proj.Version())
 	}
 }
