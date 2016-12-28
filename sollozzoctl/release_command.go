@@ -2,61 +2,67 @@ package sollozzoctl
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/spf13/cobra"
 	"github.com/yasinKIZILKAYA/sollozzo/model"
 	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 )
 
 var name string
+var major bool
+var minor bool
+var build bool
 
 func NewReleaseCommand(store *boltdb.Store) *cobra.Command {
 
 	cmd := &cobra.Command{
-		Use:   "release <project_name> <major, minor, build>",
+		Use:   "release <project_name> [--major, --minor, --build]",
 		Short: "Release project version",
 		Long:  "Release project version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) != 2 {
-				return fmt.Errorf("\"sollozzo release\" accepts project name and version parameter arguments.")
+
+			length := len(args)
+
+			if length != 1 {
+				return fmt.Errorf("\"sollozzo release\" accepts project name and version parameter(optional) arguments.")
 			}
 
 			name = args[0]
-			op := args[1]
 
-			//convert args to Release  opts
-			return runReleaseCommand(store, cmd,name,op)
+			return runReleaseCommand(store)
 		},
 	}
 
+	cmd.Flags().BoolVarP(&major, "major", "M", false, "increment version major parameter")
+	cmd.Flags().BoolVarP(&minor, "minor", "m", false, "increment version minor parameter")
+	cmd.Flags().BoolVarP(&build, "build", "b", false, "increment version build parameter")
+
 	return cmd
 }
-func runReleaseCommand(store *boltdb.Store, cmd *cobra.Command, name string, op string) error {
-		var p model.Project
+func runReleaseCommand(store *boltdb.Store) error {
+	var p model.Project
 
-		err := store.Get([]byte(name), &p)
+	err := store.Get([]byte(name), &p)
 
-		if err != nil {
-			fmt.Print("Project can not found")
-			os.Exit(1)
-		}
+	if err != nil {
+		return fmt.Errorf("Project can not found")
+	}
 
-		switch op {
-		case "major":
-			p.Major += 1
-		case "minor":
-			p.Minor += 1
-		case "build":
-			p.BuildNumber += 1
-		default:
-			cmd.Help()
-			os.Exit(1)
-		}
+	if major == true {
+		p.Major += 1
+	}
+	if minor == true {
+		p.Minor += 1
+	}
+	if build == true {
+		p.BuildNumber += 1
+	}
+	if major == false && minor == false && build == false {
+		p.BuildNumber += 1
+	}
 
-		store.Put([]byte(p.Key), &p)
+	store.Put([]byte(p.Key), &p)
 
-		fmt.Println(p.Version())
+	fmt.Println(p.Version())
 
 	return err
 }
