@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 	"github.com/yasinKIZILKAYA/sollozzo/sollozzoctl"
+	"strconv"
 )
 
 const db = "test.db"
@@ -280,4 +281,111 @@ func TestNewRemoveCommandRemoveNotExistProject(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "Project not available", err.Error())
+}
+
+// release tests
+
+func TestNewReleaseCommandMissingFlag(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+
+	err := addCmd.RunE(addCmd, []string{"abc", "1.2.3"})
+	assert.NoError(t, err)
+
+	releaseCmd := sollozzoctl.NewReleaseCommand(store)
+	err = releaseCmd.RunE(releaseCmd, []string{"abc"})
+	assert.NoError(t, err)
+}
+
+func TestNewReleaseCommandMissingProjectName(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+
+	err := addCmd.RunE(addCmd, []string{"abc", "1.2.3"})
+	assert.NoError(t, err)
+
+	releaseCmd := sollozzoctl.NewReleaseCommand(store)
+	err = releaseCmd.RunE(releaseCmd, []string{})
+
+	assert.Error(t, err)
+	assert.Equal(t, "\"sollozzo release\" accepts project name and version parameter(optional) arguments.", err.Error())
+}
+
+func TestNewReleaseCommandWithMoreArguments(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+
+	err := addCmd.RunE(addCmd, []string{"abc", "1.2.3"})
+	assert.NoError(t, err)
+
+	releaseCmd := sollozzoctl.NewReleaseCommand(store)
+	err = releaseCmd.RunE(releaseCmd, []string{"abc", "klm"})
+
+	assert.Error(t, err)
+	assert.Equal(t, "\"sollozzo release\" accepts project name and version parameter(optional) arguments.", err.Error())
+}
+
+func TestNewReleaseCommandWithMajorFlag(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+
+	err := addCmd.RunE(addCmd, []string{"abc", "1.2.3"})
+	assert.NoError(t, err)
+
+	releaseCmd := sollozzoctl.NewReleaseCommand(store)
+	flag := releaseCmd.Flag("major")
+	flag.Value.Set(strconv.FormatBool(true));
+
+	err = releaseCmd.RunE(releaseCmd, []string{"abc"})
+	assert.NoError(t, err)
+}
+
+func TestNewReleaseCommandWithAllFlag(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+
+	err := addCmd.RunE(addCmd, []string{"abc", "1.2.3"})
+	assert.NoError(t, err)
+
+	releaseCmd := sollozzoctl.NewReleaseCommand(store)
+
+	major := releaseCmd.Flag("major")
+	major.Value.Set(strconv.FormatBool(true));
+
+	minor := releaseCmd.Flag("minor")
+	minor.Value.Set(strconv.FormatBool(true));
+
+	build := releaseCmd.Flag("build")
+	build.Value.Set(strconv.FormatBool(true));
+
+	err = releaseCmd.RunE(releaseCmd, []string{"abc"})
+	assert.NoError(t, err)
+}
+
+func TestNewReleaseCommandNotExistProject(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	releaseCmd := sollozzoctl.NewReleaseCommand(store)
+	releaseCmd.HasFlags()
+	err := releaseCmd.RunE(releaseCmd, []string{"abc"})
+
+	assert.Error(t, err)
+	assert.Equal(t, "Project can not available", err.Error())
 }

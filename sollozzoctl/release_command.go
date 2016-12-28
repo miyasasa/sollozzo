@@ -44,7 +44,7 @@ func runReleaseCommand(store *boltdb.Store) error {
 	err := store.Get([]byte(name), &p)
 
 	if err != nil {
-		return fmt.Errorf("Project can not found")
+		return fmt.Errorf("Project can not available")
 	}
 
 	if major == true {
