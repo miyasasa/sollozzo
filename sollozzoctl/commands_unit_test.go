@@ -49,6 +49,8 @@ func NewTestStore() *boltdb.Store {
 	return store
 }
 
+// add command tests
+
 func TestAddCommandWithNoArgumentExpectArgumentError(t *testing.T) {
 
 	store := NewTestStore()
@@ -127,4 +129,155 @@ func TestNewAddCommandProjectIsExist(t *testing.T) {
 
 	assert.Error(t, err)
 	assert.Equal(t, "Project exist. Please remove availabile project firstly", err.Error())
+}
+
+// current command tests
+
+func TestNewCurrentCommand(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+	err := addCmd.RunE(addCmd, []string{"abc"})
+
+	assert.NoError(t, err)
+
+	currentCmd := sollozzoctl.NewCurrentCommand(store)
+
+	err = currentCmd.RunE(currentCmd, []string{"abc"})
+
+	assert.NoError(t, err)
+}
+
+func TestNewCurrentCommandWithNoArgument(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	cmd := sollozzoctl.NewCurrentCommand(store)
+
+	err := cmd.RunE(cmd, []string{})
+
+	assert.Error(t, err)
+	assert.Equal(t, "\"sollozzo current\" accepts only project name argument.", err.Error())
+}
+
+func TestNewCurrentCommandWithMoreArguments(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	cmd := sollozzoctl.NewCurrentCommand(store)
+
+	err := cmd.RunE(cmd, []string{"abc", "def"})
+
+	assert.Error(t, err)
+	assert.Equal(t, "\"sollozzo current\" accepts only project name argument.", err.Error())
+}
+
+func TestNewCurrentCommandGetNotExistProject(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	currentCmd := sollozzoctl.NewCurrentCommand(store)
+
+	err := currentCmd.RunE(currentCmd, []string{"abc"})
+
+	assert.Error(t, err)
+	assert.Equal(t, "Project not available", err.Error())
+}
+
+// list command tests
+
+func TestNewListCommand(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+
+	err := addCmd.RunE(addCmd, []string{"abc", "4.5.6"})
+	assert.NoError(t, err)
+
+	err = addCmd.RunE(addCmd, []string{"def"})
+	assert.NoError(t, err)
+
+	listCmd := sollozzoctl.NewListCommand(store)
+	err = listCmd.RunE(listCmd, []string{})
+	assert.NoError(t, err)
+}
+
+func TestNewListCommandWithArgument(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+
+	err := addCmd.RunE(addCmd, []string{"abc", "4.5.6"})
+	assert.NoError(t, err)
+
+	err = addCmd.RunE(addCmd, []string{"def"})
+	assert.NoError(t, err)
+
+	listCmd := sollozzoctl.NewListCommand(store)
+	err = listCmd.RunE(listCmd, []string{"abc"})
+
+	assert.Error(t, err)
+	assert.Equal(t, "\"sollozzo list\" accepts no argument(s).", err.Error())
+}
+
+func TestNewListCommandNoProject(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	listCmd := sollozzoctl.NewListCommand(store)
+	err := listCmd.RunE(listCmd, []string{})
+
+	assert.Error(t, err)
+	assert.Equal(t, "You do not have a project yet", err.Error())
+}
+
+// remove command test
+
+func TestNewRemoveCommand(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	addCmd := sollozzoctl.NewAddCommand(store)
+
+	err := addCmd.RunE(addCmd, []string{"abc", "4.5.6"})
+	assert.NoError(t, err)
+
+	removeCmd := sollozzoctl.NewRemoveCommand(store)
+	err = removeCmd.RunE(removeCmd, []string{"abc"})
+	assert.NoError(t, err)
+}
+
+func TestNewRemoveCommandWithMoreArguments(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	removeCmd := sollozzoctl.NewRemoveCommand(store)
+	err := removeCmd.RunE(removeCmd, []string{"abc", "def"})
+
+	assert.Error(t, err)
+	assert.Equal(t, "\"sollozzo remove\" accepts only project name argument.", err.Error())
+}
+
+func TestNewRemoveCommandRemoveNotExistProject(t *testing.T) {
+	store := NewTestStore()
+
+	defer store.Close()
+
+	removeCmd := sollozzoctl.NewRemoveCommand(store)
+	err := removeCmd.RunE(removeCmd, []string{"abc"})
+
+	assert.Error(t, err)
+	assert.Equal(t, "Project not available", err.Error())
 }

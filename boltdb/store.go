@@ -132,7 +132,7 @@ func (s *Store) Delete(key []byte) error {
 		encoded := bucket.Get(key)
 
 		if encoded == nil {
-			return fmt.Errorf("project not available")
+			return fmt.Errorf("Project not available")
 		}
 
 		err1 := bucket.Delete(key)
