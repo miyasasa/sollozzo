@@ -7,12 +7,16 @@ import (
 	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
 )
 
-var name string
-var major bool
-var minor bool
-var build bool
+type releaseOpt struct {
+	name  string
+	major bool
+	minor bool
+	build bool
+}
 
 func NewReleaseCommand(store *boltdb.Store) *cobra.Command {
+
+	opt := &releaseOpt{};
 
 	cmd := &cobra.Command{
 		Use:   "release <project_name> [--major, --minor, --build]",
@@ -26,37 +30,37 @@ func NewReleaseCommand(store *boltdb.Store) *cobra.Command {
 				return fmt.Errorf("\"sollozzo release\" accepts project name and version parameter(optional) arguments.")
 			}
 
-			name = args[0]
+			opt.name = args[0]
 
-			return runReleaseCommand(store)
+			return runReleaseCommand(store, opt)
 		},
 	}
 
-	cmd.Flags().BoolVarP(&major, "major", "M", false, "increment version major parameter")
-	cmd.Flags().BoolVarP(&minor, "minor", "m", false, "increment version minor parameter")
-	cmd.Flags().BoolVarP(&build, "build", "b", false, "increment version build parameter")
+	cmd.Flags().BoolVarP(&opt.major, "major", "M", false, "increment version major parameter")
+	cmd.Flags().BoolVarP(&opt.minor, "minor", "m", false, "increment version minor parameter")
+	cmd.Flags().BoolVarP(&opt.build, "build", "b", false, "increment version build parameter")
 
 	return cmd
 }
-func runReleaseCommand(store *boltdb.Store) error {
+func runReleaseCommand(store *boltdb.Store, opt *releaseOpt) error {
 	var p model.Project
 
-	err := store.Get([]byte(name), &p)
+	err := store.Get([]byte(opt.name), &p)
 
 	if err != nil {
 		return fmt.Errorf("Project can not available")
 	}
 
-	if major == true {
+	if opt.major == true {
 		p.Major += 1
 	}
-	if minor == true {
+	if opt.minor == true {
 		p.Minor += 1
 	}
-	if build == true {
+	if opt.build == true {
 		p.BuildNumber += 1
 	}
-	if major == false && minor == false && build == false {
+	if opt.major == false && opt.minor == false && opt.build == false {
 		p.BuildNumber += 1
 	}
 
