@@ -1,14 +1,13 @@
 package boltdb
 
 import (
-	"encoding/json"
-	"errors"
 	"os"
-	"os/user"
-	"path/filepath"
-	"time"
-
 	"fmt"
+	"time"
+	"os/user"
+	"encoding/json"
+	"path/filepath"
+
 	"github.com/boltdb/bolt"
 )
 
@@ -133,7 +132,7 @@ func (s *Store) Delete(key []byte) error {
 		encoded := bucket.Get(key)
 
 		if encoded == nil {
-			return errors.New("project not found")
+			return fmt.Errorf("project not available")
 		}
 
 		err1 := bucket.Delete(key)
@@ -153,7 +152,7 @@ func (s *Store) Get(key []byte, t interface{}) error {
 
 		encoded := bucket.Get(key)
 		if encoded == nil {
-			return errors.New("project not found")
+			return fmt.Errorf("Project not available")
 		}
 		json.Unmarshal(encoded, t)
 

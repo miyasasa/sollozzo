@@ -1,7 +1,6 @@
 package sollozzoctl
 
 import (
-	"os"
 	"fmt"
 	"encoding/json"
 
@@ -42,11 +41,10 @@ func runListCommand(store *boltdb.Store) error {
 	})
 
 	if 0 == len(projects) {
-		fmt.Println("You do not have a project yet")
-		os.Exit(0)
-	} else {
-		model.Display(projects);
+		return fmt.Errorf("You do not have a project yet")
 	}
+
+	model.Display(projects);
 
 	return nil
 }
