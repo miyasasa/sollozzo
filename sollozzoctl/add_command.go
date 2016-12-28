@@ -53,7 +53,14 @@ func runAddCommand(store *boltdb.Store, args []string) error {
 		project = &model.Project{Key: args[0], Major: 1, Minor: 0, BuildNumber: 0}
 	}
 
-	err := store.Put([]byte(args[0]), project)
+	var existProject= model.Project{}
+	err:=store.Get([]byte(project.Key),&existProject)
+
+	if err==nil{
+		return fmt.Errorf("Project exist. Please remove availabile project firstly")
+	}
+
+	err = store.Put([]byte(args[0]), project)
 
 	if err == nil {
 		fmt.Println(project.Key + " created successfully")
