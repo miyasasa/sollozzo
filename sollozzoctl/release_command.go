@@ -14,13 +14,12 @@ var name string
 func NewReleaseCommand(store *boltdb.Store) *cobra.Command {
 
 	cmd := &cobra.Command{
-		Use:   "release [projectname] [major, minor, build]",
+		Use:   "release <project_name> <major, minor, build>",
 		Short: "Release project version",
 		Long:  "Release project version",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			if len(args) != 2 {
-				cmd.Help()
-				return nil
+				return fmt.Errorf("\"sollozzo release\" accepts project name and version parameter arguments.")
 			}
 
 			name = args[0]
@@ -39,7 +38,7 @@ func runReleaseCommand(store *boltdb.Store, cmd *cobra.Command, name string, op 
 		err := store.Get([]byte(name), &p)
 
 		if err != nil {
-			fmt.Print("can not found project !!")
+			fmt.Print("Project can not found")
 			os.Exit(1)
 		}
 

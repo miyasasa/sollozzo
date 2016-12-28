@@ -11,11 +11,15 @@ import (
 func NewCurrentCommand(store *boltdb.Store) *cobra.Command {
 
 	cmd := &cobra.Command{
-		Use:   "current [project current version]",
+		Use:   "current <project_name>",
 		Short: "Show project current version",
 		Long:  "Show project current version",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			//convert args to Add opts
+
+			if len(args) != 1 {
+				return fmt.Errorf("\"sollozzo current\" accepts only project name argument.")
+			}
+
 			return runCurrentCommand(store, args)
 		},
 	}

@@ -13,11 +13,14 @@ import (
 func NewListCommand(store *boltdb.Store) *cobra.Command {
 
 	cmd := &cobra.Command{
-		Use:   "list [list of projects]",
+		Use:   "list",
 		Short: "List of your projects",
 		Long:  "List of your projects",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			//convert args to Add opts
+
+			if len(args) != 0 {
+				return fmt.Errorf("\"sollozzo list\" accepts no argument(s).")
+			}
 			return runListCommand(store)
 		},
 	}

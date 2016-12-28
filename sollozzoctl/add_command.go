@@ -11,11 +11,14 @@ import (
 func NewAddCommand(store *boltdb.Store) *cobra.Command {
 
 	cmd := &cobra.Command{
-		Use:   "add [Add new Project]",
+		Use:   "add <project_name>",
 		Short: "Add new Project",
 		Long:  "Add new Project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			//convert args to Add opts
+
+			if len(args) != 1 {
+				return fmt.Errorf("\"sollozzo add\" accepts only project name argument.")
+			}
 			return runAddCommand(store, args)
 		},
 	}

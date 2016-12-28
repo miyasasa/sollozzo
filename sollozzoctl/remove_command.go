@@ -10,11 +10,15 @@ import (
 func NewRemoveCommand(store *boltdb.Store) *cobra.Command {
 
 	cmd := &cobra.Command{
-		Use:   "remove [remove project]",
+		Use:   "remove <project_name>",
 		Short: "Remove project",
 		Long:  "Remove project",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			//convert args to Add opts
+
+			if len(args) != 1 {
+				return fmt.Errorf("\"sollozzo remove\" accepts only project name argument.")
+			}
+
 			return runRemoveCommand(store, args)
 		},
 	}
