@@ -2,12 +2,12 @@ package sollozzoctl
 
 import (
 	"fmt"
-	"regexp"
-	"strings"
-	"strconv"
 	"github.com/spf13/cobra"
-	"github.com/yasinKIZILKAYA/sollozzo/model"
 	"github.com/yasinKIZILKAYA/sollozzo/boltdb"
+	"github.com/yasinKIZILKAYA/sollozzo/model"
+	"regexp"
+	"strconv"
+	"strings"
 )
 
 func NewAddCommand(store *boltdb.Store) *cobra.Command {
@@ -31,14 +31,14 @@ func NewAddCommand(store *boltdb.Store) *cobra.Command {
 }
 func runAddCommand(store *boltdb.Store, args []string) error {
 
-	var project = &model.Project{};
+	var project = &model.Project{}
 
 	if len(args) == 2 {
 
 		reg, err := regexp.MatchString("^(\\d)(.\\d){2}$", args[1])
 
 		if err != nil || reg == false {
-			return fmt.Errorf("Project can not created. Invalid version number, try as 1.2.3 ")
+			return fmt.Errorf("Project can not created. Invalid version number, try as 1.2.3")
 		}
 		vParameters := strings.Split(args[1], ".")
 
@@ -53,10 +53,10 @@ func runAddCommand(store *boltdb.Store, args []string) error {
 		project = &model.Project{Key: args[0], Major: 1, Minor: 0, BuildNumber: 0}
 	}
 
-	var existProject= model.Project{}
-	err:=store.Get([]byte(project.Key),&existProject)
+	var existProject = model.Project{}
+	err := store.Get([]byte(project.Key), &existProject)
 
-	if err==nil{
+	if err == nil {
 		return fmt.Errorf("Project exist. Please remove availabile project firstly")
 	}
 
