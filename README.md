@@ -4,9 +4,11 @@ OVERVİEW
 Sollozzo is command line tool developed with GO(GoLang). Sollozzo provide you can keep version info of your projects. Also you can make base CRUD operations on these projects.
  
 GETTING STARTED
+
 We apply all operation on sample project that it get the name "ibe".
 
 COMMANDS
+
 Sollozzo offers two options to create a new project with add a command line parameter:
 
  sollozzo add ibe : This command creates a new project called ibe. It's version is 1.0.0 by default
