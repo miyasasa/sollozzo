@@ -1,13 +1,13 @@
 
-OVERVİEW
+**_Overview_**
 
-Sollozzo is command line tool developed with GO(GoLang). Sollozzo provide you can keep version info of your projects. Also you can make base CRUD operations on these projects.
+Sollozzo is command line tool developed with [GO(GoLang)](https://golang.org/). Sollozzo provide you can keep version info of your projects. Also you can make base _CRUD_ operations on these projects.
  
-GETTING STARTED
+**_Getting Started_**
 
 We apply all operation on sample project that it get the name "ibe".
 
-COMMANDS
+**_Commands_**
 
 Sollozzo offers two options to create a new project with add a command line parameter:
 
